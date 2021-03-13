@@ -2,57 +2,83 @@
 
 module ChronoTrigger
   class Event
-    attr_reader :id, :args, :repeats, :every, :at, :before, :after
-
     class << self
-
       def schedule(*args)
         id = SecureRandom.uuid
         options = OpenStruct.new(
           id: id,
+          scope: @scope,
           repeats: @repeats || 1,
           every: @every || 1.second,
-          at: @at || "",
-          before: @before || "",
-          after: @after || ""
+          at: @at,
+          before: @before,
+          after: @after
         )
         event = self.new(options, args)
         id
       end
 
-      def at(value)
-        @at = value if value&.is_a?(String) || value&.is_a?(ActiveSupport::TimeWithZone)
+      def scope(value)
+        return unless value
+        @scope = value if value.is_a?(String)
+        @scope = value.to_gid.to_s if value.is_a?(ActiveRecord::Base)
+        self
       end
-
-      def before(value)
-        @before = value if value&.is_a?(String) || value&.is_a?(ActiveSupport::TimeWithZone)
-      end
-
-      def after(value)
-        @after = value if value&.is_a?(String) || value&.is_a?(ActiveSupport::TimeWithZone)
-      end
-
-      private
 
       def repeats(value)
-        @repeats = value if value&.integer? || value == :forever
+        return unless value
+        @repeats = value if value.integer? || value == :forever
+        self
       end
 
       def every(value)
-        @every = value if value&.is_a?(ActiveSupport::Duration) || value&.integer?
+        return unless value
+        @every = value if value.is_a?(ActiveSupport::Duration)
+        @every = value.seconds if value.integer?
+        self
       end
 
+      def at(value)
+        return unless value
+        @at = value if value.is_a?(ActiveSupport::TimeWithZone)
+        @at = Time.zone.parse(value) if value.is_a?(String)
+        self
+      end
+
+      def before(value)
+        return unless value
+        @before = value if value.is_a?(ActiveSupport::TimeWithZone)
+        @before = Time.zone.parse(value) if value.is_a?(String)
+        self
+      end
+
+      def after(value)
+        return unless value
+        @after = value if value.is_a?(ActiveSupport::TimeWithZone)
+        @after = Time.zone.parse(value) if value.is_a?(String)
+        self
+      end
     end
+
+    attr_reader :id, :scope, :args, :every, :before, :after, :purge
+    attr_accessor :repeats, :at
 
     def initialize(options, args)
       @id = options.id
+      @scope = options.scope
       @repeats = options.repeats
       @every = options.every
-      @at = Time.zone.parse(options.at)
-      @before = Time.zone.parse(options.before)
-      @after = Time.zone.parse(options.after)
+      @at = options.at
+      @before = options.before
+      @after = options.after
       @args = args
+      @purge = false
       ChronoTrigger.schedule.add(self)
+    end
+
+    def purge!
+      puts "purging #{id}"
+      @purge = true
     end
 
     private

@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-require "singleton"
-
 module ChronoTrigger
   class Config
     include Singleton
-
     attr_accessor :interval
 
     def initialize

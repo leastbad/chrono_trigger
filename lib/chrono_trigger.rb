@@ -2,6 +2,7 @@
 
 require "rails/engine"
 require "active_support/all"
+require "singleton"
 require "chrono_trigger/clock"
 require "chrono_trigger/config"
 require "chrono_trigger/event"
