@@ -5,7 +5,7 @@ module ChronoTrigger
     extend ::ActiveSupport::Concern
 
     def chrono_trigger
-      ChronoTrigger::Clock.instance
+      ChronoTrigger::Schedule.instance
     end
   end
 end

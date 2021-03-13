@@ -21,25 +21,25 @@ module ChronoTrigger
       end
 
       def at(value)
-        @at = value if value&.is_a? String
+        @at = value if value&.is_a?(String) || value&.is_a?(ActiveSupport::TimeWithZone)
       end
 
       def before(value)
-        @before = value if value&.is_a? String
+        @before = value if value&.is_a?(String) || value&.is_a?(ActiveSupport::TimeWithZone)
       end
 
       def after(value)
-        @after = value if value&.is_a? String
+        @after = value if value&.is_a?(String) || value&.is_a?(ActiveSupport::TimeWithZone)
       end
 
       private
 
       def repeats(value)
-        @repeats = value if value&.integer?
+        @repeats = value if value&.integer? || value == :forever
       end
 
       def every(value)
-        @every = value if value&.is_a? ActiveSupport::Duration
+        @every = value if value&.is_a?(ActiveSupport::Duration) || value&.integer?
       end
 
     end
@@ -52,7 +52,7 @@ module ChronoTrigger
       @before = Time.zone.parse(options.before)
       @after = Time.zone.parse(options.after)
       @args = args
-      ChronoTrigger::Clock.instance.add_event(self)
+      ChronoTrigger.schedule.add(self)
     end
 
     private

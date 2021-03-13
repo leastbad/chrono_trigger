@@ -5,6 +5,7 @@ require "active_support/all"
 require "chrono_trigger/clock"
 require "chrono_trigger/config"
 require "chrono_trigger/event"
+require "chrono_trigger/schedule"
 require "chrono_trigger/timeline"
 require "chrono_trigger/version"
 
@@ -14,6 +15,10 @@ module ChronoTrigger
 
   def self.config
     ChronoTrigger::Config.instance
+  end
+
+  def self.schedule
+    ChronoTrigger::Schedule.instance
   end
 
   def self.configure
