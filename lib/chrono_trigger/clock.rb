@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
+require "singleton"
+
 module ChronoTrigger
   class Clock
+    include Singleton
+    attr_reader :events
+
     class << self
 
       attr_reader :status
@@ -20,7 +25,7 @@ module ChronoTrigger
               if Time.now - last_tick >= 1
                 last_tick += 1
                 Thread.new do
-                  ExampleEvent.new.heartbeat
+                  ExampleEvent.schedule
                 end
               end
               break if stopped?
@@ -28,7 +33,7 @@ module ChronoTrigger
           end
         end
 
-        @status = :ticking
+        @status = :started
       end
 
       def stop
@@ -39,7 +44,7 @@ module ChronoTrigger
       end
 
       def ticking?
-        @status == :ticking
+        @status == :started
       end
 
       def stopped?
@@ -47,6 +52,16 @@ module ChronoTrigger
       end
     end
 
-    init
+    def initialize
+      @events = []
+    end
+
+    def add_event(event)
+      @events << event
+    end
+
+    def remove_event(uuid)
+      @events.reject! { |k,v| v == uuid }
+    end
   end
 end

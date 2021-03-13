@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "clock"
-
 module ChronoTrigger
   module Timeline
     extend ::ActiveSupport::Concern
