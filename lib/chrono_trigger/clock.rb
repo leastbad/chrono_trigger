@@ -3,9 +3,10 @@
 module ChronoTrigger
   class Clock
     class << self
-      attr_reader :status
+      attr_reader :status, :ticks
 
       def init
+        @ticks = 0
         @status = :stopped unless @status
       end
 
@@ -19,6 +20,7 @@ module ChronoTrigger
               sleep ChronoTrigger.config.interval
               if Time.now - last_tick >= 1
                 last_tick += 1
+                @ticks += 1
                 ChronoTrigger.schedule.process_events
               end
               break if stopped?
