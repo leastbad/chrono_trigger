@@ -2,11 +2,11 @@
 
 **This is very much in beta. It's intentionally not released on rubygems.**
 
-ChronoTrigger is an in-process clock for Rails. You use it to run code at specific times and/or at specific intervals. It runs on real world time - like cron - every tick happens not after a wait 1 but at the beginning of each chronological second.
+ChronoTrigger is an in-process clock for Rails. You use it to run code at specific times and/or at specific intervals. It runs on real world time - like cron - every tick happens not after a `sleep 1` but at the beginning of each chronological second.
 
 Anywhere in your app, you can schedule an event. There's also a singleton method called `chrono_trigger` that lets you add or remove things to run... once, n times or every second until you tell it to stop!
 
-My first use case for this gem is to combine it with CableReady to deliver a string of updates to the client which starts immediately after a user logs in or navigates to a page. Instead of a static UI, I want the user to feel like they are jumping into a site that has shit happening: charts moving, notifications arriving, people liking things on the activity stream... even if it's just a demo because it's a demo and I want it to feel real.
+My first use case for this gem is to combine it with CableReady to deliver a string of updates to the client which starts immediately after a user logs in or navigates to a page. Instead of a static UI, I want the user to feel like they are jumping into a site that has shit happening: charts moving, notifications arriving, people liking things on the activity stream... ~~even if it's just a demo~~ because it's a demo and I want it to feel real.
 
 ## Potential use cases
 
@@ -78,7 +78,7 @@ Developers create Event classes that have a mandatory `perform` method, similar 
 
 ### config.rb
 
-There is an optional initializer, but right now it just has the `sleep` interval. I am very likely to add the ability schedule tasks intended to be running forever to the config. Even though you can schedule an event from anywhere, it makes sense to tell people "this is where you should launch your long-running events" so people don't need to think about it.
+There is an optional initializer, but right now it just has the `sleep` interval. I am very likely to add the ability to schedule tasks intended to be running forever to the config. Even though you can schedule an event from anywhere, it makes sense to tell people "this is where you should launch your long-running events" so people don't need to think about it.
 
 ## Installation and Setup
 
