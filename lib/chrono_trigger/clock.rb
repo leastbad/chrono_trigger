@@ -13,6 +13,7 @@ module ChronoTrigger
         init
         if stopped?
           Thread.new do
+            Thread.current.name = "chrono_trigger"
             last_tick = Time.now
             loop do
               sleep ChronoTrigger.config.interval
@@ -22,6 +23,7 @@ module ChronoTrigger
               end
               break if stopped?
             end
+            Thread.exit
           end
         end
 

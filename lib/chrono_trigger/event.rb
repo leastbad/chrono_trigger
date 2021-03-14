@@ -19,44 +19,53 @@ module ChronoTrigger
       end
 
       def scope(value)
-        return unless value
+        return self unless value
         @scope = value if value.is_a?(String)
         @scope = value.to_gid.to_s if value.is_a?(ActiveRecord::Base)
         self
       end
 
       def repeats(value)
-        return unless value
-        @repeats = value if value.integer? || value == :forever
+        return self unless value
+        @repeats = value.count if value.is_a?(Enumerator)
+        @repeats = value if value.is_a?(Integer) || value == :forever
         self
       end
 
       def every(value)
-        return unless value
+        return self unless value
         @every = value if value.is_a?(ActiveSupport::Duration)
-        @every = value.seconds if value.integer?
+        @every = value.seconds if value.is_a?(Integer)
         self
       end
 
       def at(value)
-        return unless value
-        @at = value if value.is_a?(ActiveSupport::TimeWithZone)
-        @at = Time.zone.parse(value) if value.is_a?(String)
+        return self unless value
+        value = Time.zone.parse(value) if value.is_a?(String)
+        @at = moment_in_the_future(value) if value.is_a?(ActiveSupport::TimeWithZone)
+        puts @at.class
         self
       end
 
       def before(value)
-        return unless value
-        @before = value if value.is_a?(ActiveSupport::TimeWithZone)
-        @before = Time.zone.parse(value) if value.is_a?(String)
+        return self unless value
+        value = Time.zone.parse(value) if value.is_a?(String)
+        @before = moment_in_the_future(value) if value.is_a?(ActiveSupport::TimeWithZone)
         self
       end
 
       def after(value)
-        return unless value
-        @after = value if value.is_a?(ActiveSupport::TimeWithZone)
-        @after = Time.zone.parse(value) if value.is_a?(String)
+        return self unless value
+        value = Time.zone.parse(value) if value.is_a?(String)
+        @after = moment_in_the_future(value) if value.is_a?(ActiveSupport::TimeWithZone) 
         self
+      end
+
+      private
+
+      def moment_in_the_future(time_with_zone)
+        return nil unless time_with_zone&.future?
+        Time.zone.today + time_with_zone.hour.hours + time_with_zone.min.minutes + time_with_zone.sec.seconds
       end
     end
 
@@ -77,7 +86,6 @@ module ChronoTrigger
     end
 
     def purge!
-      puts "purging #{id}"
       @purge = true
     end
 
