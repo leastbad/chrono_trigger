@@ -13,20 +13,16 @@ module ChronoTrigger
       def start
         init
         if stopped?
-          Thread.new do
-            Thread.current.name = "chrono_trigger"
-            last_tick = Time.now
-            loop do
-              sleep ChronoTrigger.config.interval
-              if Time.now - last_tick >= 1
-                last_tick += 1
-                @ticks += 1
-                ChronoTrigger.schedule.process_events
-              end
-              break if stopped?
+          last_tick = Time.zone.now
+          task = Concurrent::TimerTask.new(execution_interval:ChronoTrigger.config.interval) do |task|
+            if Time.zone.now - last_tick >= 1
+              last_tick += 1
+              @ticks += 1
+              ChronoTrigger.schedule.process_events
             end
-            Thread.exit
+            task.shutdown if stopped?
           end
+          task.execute
         end
 
         @status = :started

@@ -6,7 +6,7 @@ module ChronoTrigger
     attr_reader :events
 
     def initialize
-      @events = []
+      @events = Concurrent::Array.new
     end
 
     def add(event)
@@ -41,7 +41,7 @@ module ChronoTrigger
           next
         end
         next if event.after && now < event.after
-        if event.at.nil? || event.at == now
+        if event.at.nil? || event.at <= now
           Thread.new do
             Thread.current.name = event.id
             event.perform(*event.args) if event.at.nil? || event.at < event.before

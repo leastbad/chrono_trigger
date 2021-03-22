@@ -14,7 +14,8 @@ Gem::Specification.new do |gem|
   gem.files = Dir["lib/**/*.rb", "bin/*", "[A-Z]*"]
 
   gem.add_dependency "rails", ">= 5.2"
-  gem.add_dependency "thread-local", ">= 1.1.0"
+  gem.add_dependency "concurrent-ruby", ">= 1.1.8"
+  gem.add_dependency "concurrent-ruby-edge", ">= 0.6.0"
 
   gem.add_development_dependency "magic_frozen_string_literal"
   gem.add_development_dependency "pry"
