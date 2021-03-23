@@ -7,14 +7,14 @@ module ChronoTrigger
 
       def init
         @ticks = 0
-        @status = :stopped unless @status
+        @status ||= :stopped
       end
 
       def start
         init
         if stopped?
           last_tick = Time.zone.now
-          task = Concurrent::TimerTask.new(execution_interval:ChronoTrigger.config.interval) do |task|
+          task = Concurrent::TimerTask.new(execution_interval: ChronoTrigger.config.interval) do |task|
             if Time.zone.now - last_tick >= 1
               last_tick += 1
               @ticks += 1

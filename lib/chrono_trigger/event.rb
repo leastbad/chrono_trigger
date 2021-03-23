@@ -14,7 +14,7 @@ module ChronoTrigger
           before: @before,
           after: @after
         )
-        event = self.new(options, args)
+        new(options, args)
         id
       end
 
@@ -57,7 +57,7 @@ module ChronoTrigger
       def after(value)
         return self unless value
         value = Time.zone.parse(value) if value.is_a?(String)
-        @after = moment_in_the_future(value) if value.is_a?(ActiveSupport::TimeWithZone) 
+        @after = moment_in_the_future(value) if value.is_a?(ActiveSupport::TimeWithZone)
         self
       end
 
