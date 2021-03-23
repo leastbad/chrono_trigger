@@ -14,6 +14,8 @@ module ChronoTrigger
         init
         if stopped?
           last_tick = Time.zone.now
+          Rails.logger.info "ChronoTrigger: Clock started with a #{ChronoTrigger.config.interval}s interval"
+          ChronoTrigger.schedule.refresh
           task = Concurrent::TimerTask.new(execution_interval: ChronoTrigger.config.interval) do |task|
             if Time.zone.now - last_tick >= 1
               last_tick += 1
@@ -30,6 +32,7 @@ module ChronoTrigger
 
       def stop
         if ticking?
+          Rails.logger.info "ChronoTrigger: Timer stopped"
           @status = :stopped
         end
         @status

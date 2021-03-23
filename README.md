@@ -44,7 +44,6 @@ Note that while I did initially consider using ActiveJob, I quickly realized tha
 
 ## Areas I'd appreciate feedback and review
 
-- Is my use of `Thread` defensible? Is there a better/more suitable primative like fibers or ractors?
 - What happens in a multi-dyno situation?
 - What happens when there could be thousands of concurrent users? How expensive are threads in the context I use them?
 - Should I be using thread local singletons? I'm a bit fuzzy on all of that stuff.
@@ -78,7 +77,7 @@ Developers create Event classes that have a mandatory `perform` method, similar 
 
 ### config.rb
 
-There is an optional initializer, but right now it just has the `sleep` interval. I am very likely to add the ability to schedule tasks intended to be running forever to the config. Even though you can schedule an event from anywhere, it makes sense to tell people "this is where you should launch your long-running events" so people don't need to think about it.
+There is an optional initializer, but right now it just has the timer interval. I am very likely to add the ability to schedule tasks intended to be running forever to the config. Even though you can schedule an event from anywhere, it makes sense to tell people "this is where you should launch your long-running events" so people don't need to think about it.
 
 ## Installation and Setup
 
@@ -89,14 +88,10 @@ There is an optional initializer, but right now it just has the `sleep` interval
 ChronoTrigger.configure do |config|
   config.interval = 0.1 # also the default
 end
-```
-4. Launch ChronoTrigger from your `config/puma.rb`:
-```rb
-# bottom of file
-require "chrono_trigger/clock"
+
 ChronoTrigger::Clock.start
 ```
-5. Create your `app/events` folder, then create `application_event.rb` and `example_event.rb`:
+4. Create your `app/events` folder, then create `application_event.rb` and `example_event.rb`:
 ```rb
 require 'chrono_trigger/event'
 
@@ -116,7 +111,7 @@ class ExampleEvent < ApplicationEvent
   end
 end
 ```
-6. Create a Reflex (and a view) to schedule some events:
+5. Create a Reflex (and a view) to schedule some events:
 ```rb
 class ExampleReflex < ApplicationReflex
   include ChronoTrigger::Timeline
@@ -168,7 +163,7 @@ end
   </div>
 </div>
 ```
-7. Set up a `UsersChannel`:
+6. Set up a `UsersChannel`:
 ```rb
 class UsersChannel < ApplicationCable::Channel
   def subscribed

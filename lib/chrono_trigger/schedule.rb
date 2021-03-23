@@ -8,6 +8,7 @@ module ChronoTrigger
     def initialize
       @events = Concurrent::Array.new
       @pool = Concurrent::Actor::Utils::Pool.spawn! "pool", 5 do |index|
+        Rails.logger.info "ChronoTrigger: Spawning worker schedule-#{index}"
         ChronoTrigger::Worker.spawn name: "schedule-#{index}", supervise: true, args: []
       end
     end
@@ -44,15 +45,19 @@ module ChronoTrigger
           next
         end
         next if event.after && now < event.after
-        if event.at.nil? || (event.at <= now && event.at < event.before)
+        if event.at.nil? || event.at == now
           @pool << event
           event.at = now + event.every
-          if event.at >= event.before
-            @events.delete(event)
-          else
-            event.repeats -= 1 unless event.repeats == :forever
-          end
+          event.repeats -= 1 unless event.repeats == :forever
         end
+      end
+    end
+
+    def refresh
+      now = right_now
+      events.each do |event|
+        next if event.at.nil?
+        event.at = nil if event.at < now
       end
     end
 
