@@ -7,6 +7,9 @@ module ChronoTrigger
 
     def initialize
       @events = Concurrent::Array.new
+      @pool = Concurrent::Actor::Utils::Pool.spawn! 'pool', 5 do |index|
+        ChronoTrigger::Worker.spawn name: "schedule-#{index}", supervise: true, args: []
+      end
     end
 
     def add(event)
@@ -41,12 +44,8 @@ module ChronoTrigger
           next
         end
         next if event.after && now < event.after
-        if event.at.nil? || event.at <= now
-          Thread.new do
-            Thread.current.name = event.id
-            event.perform(*event.args) if event.at.nil? || event.at < event.before
-            Thread.exit
-          end
+        if event.at.nil? || (event.at <= now && event.at < event.before)
+          @pool << event
           event.at = now + event.every
           if event.at >= event.before
             @events.delete(event)

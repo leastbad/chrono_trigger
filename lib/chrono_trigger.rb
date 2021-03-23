@@ -3,12 +3,14 @@
 require "rails/engine"
 require "active_support/all"
 require "singleton"
+require "concurrent-edge"
 require "chrono_trigger/clock"
 require "chrono_trigger/config"
 require "chrono_trigger/event"
 require "chrono_trigger/schedule"
 require "chrono_trigger/timeline"
 require "chrono_trigger/version"
+require "chrono_trigger/worker"
 
 module ChronoTrigger
   class Engine < Rails::Engine
