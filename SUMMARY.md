@@ -1,4 +1,5 @@
 # Table of contents
 
-* [Initial page](README.md)
+* [ChronoTrigger](README.md)
+* [Setup](setup.md)
 
