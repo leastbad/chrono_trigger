@@ -85,6 +85,10 @@ Starting on the next tick, each instance of `ExampleEvent` will repeat every 3 s
 You can combine attributes set with class methods and chained methods. Note that attributes set via chained methods take precedence over class methods, allowing you to set meaningful defaults in your `Event` class and then override them like a pirate when actually scheduling.
 {% endhint %}
 
+## Parameters
+
+
+
 ## Helper methods
 
 **moment\_in\_the\_future\(**ActiveSupport::TimeWithZone**\)**: accepts a \`ActiveSupport::TimeWithZone\` that **must be in the future**. Returns an `ActiveSupport::TimeWithZone` that is **today** and has no fractional seconds.
