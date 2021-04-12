@@ -42,7 +42,6 @@ module ChronoTrigger
         return self unless value
         value = Time.zone.parse(value) if value.is_a?(String)
         @at = moment_in_the_future(value) if value.is_a?(ActiveSupport::TimeWithZone)
-        puts @at.class
         self
       end
 
