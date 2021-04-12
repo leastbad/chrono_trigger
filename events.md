@@ -24,19 +24,7 @@ event = ExampleEvent.schedule
 It's a good idea to assign `Event` instances to a variable so that you can access important attributes and methods you'll use later.
 {% endhint %}
 
-With no parameters or options specified, this `ExampleEvent` will run one time. This will happen at the next **tick**.
-
-## Ticks
-
-Ticks are how ChronoTrigger refers to the beginning of the next clock second. It's always less than a second away. Don't blink! 😲
-
-From the moment your server boots and the `Clock` starts, every second is a new tick. You can actually see how many ticks have passed since the server was started by running the `ticks` helper method inside your event's `perform` method, or directly inspecting the `Clock` itself:
-
-```ruby
-puts ChronoTrigger::Clock.ticks
-```
-
-You might find creative uses for ticks, especially if in your application you sometimes [pause](the-clock.md#stop) the `Clock`. In such a scenario, you might find yourself wondering how many ticks have occurred, even if far more IRL time has passed.
+With no parameters or options specified, this `ExampleEvent` will run one time. This will happen at the next [tick](time.md).
 
 ## Event attributes
 
@@ -101,7 +89,7 @@ You can combine attributes set with class methods and chained methods. Note that
 
 **moment\_in\_the\_future\(**ActiveSupport::TimeWithZone**\)**: accepts a \`ActiveSupport::TimeWithZone\` that **must be in the future**. Returns an `ActiveSupport::TimeWithZone` that is **today** and has no fractional seconds.
 
-**purge!**: ****Marks the instance for death at the beginning of the next tick. _As with other dead things_, it will not run again. Note: you can inspect the `purge` accessor boolean inside of your `Event` class.
+**purge!**: ****Marks the instance for death at the beginning of the next tick. _As with other dead things_, it will not run again. Note: you can inspect the `purge` accessor boolean inside of your `Event` class. 🎯
 
 **right\_now**: Returns the current time with no fractional seconds.
 
