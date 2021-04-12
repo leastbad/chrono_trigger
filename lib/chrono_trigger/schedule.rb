@@ -63,9 +63,6 @@ module ChronoTrigger
 
     private
 
-    def right_now
-      now = Time.zone.now
-      Time.zone.today + now.hour.hours + now.min.minutes + now.sec.seconds
-    end
+    include ChronoTrigger::Helpers::Now
   end
 end
