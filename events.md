@@ -44,6 +44,10 @@ With no parameters or options specified, this `ExampleEvent` will run one time. 
 
 **after**: only run this `Event` instance after a certain time. It can be set to a String that will be parsed into a `ActiveSupport::TimeWithZone` or you can pass an `ActiveSupport::TimeWithZone` directly.
 
+{% hint style="success" %}
+All of the attributes are read-accessible inside your `perform` method.
+{% endhint %}
+
 ## Method chaining
 
 You can provide values for some or all of an `Event` instance's attributes using chained methods:
@@ -87,11 +91,27 @@ You can combine attributes set with class methods and chained methods. Note that
 
 ## Parameters
 
+Similar to an ActiveJob, you can pass arguments into an `Event` when you schedule it:
 
+```ruby
+ExampleEvent.schedule(current_user)
+```
+
+`Event` instances don't automatically know the `current_user` but we can tell it. Let's use CableReady's [console\_log](https://cableready.stimulusreflex.com/reference/operations/notifications#console_log) operation to send them a customizable greeting via the `UsersChannel` that is already present in our fictional example.
+
+{% code title="app/events/example\_event.rb" %}
+```ruby
+class ExampleEvent < ApplicationEvent
+  def perform(user, greeting = "Hello")
+    cable_ready[UsersChannel].console_log(message: "#{greeting}, #{user.name}!").broadcast_to(user)
+  end
+end
+```
+{% endcode %}
 
 ## Helper methods
 
-**moment\_in\_the\_future\(**ActiveSupport::TimeWithZone**\)**: accepts a \`ActiveSupport::TimeWithZone\` that **must be in the future**. Returns an `ActiveSupport::TimeWithZone` that is **today** and has no fractional seconds.
+**moment\_in\_the\_future\(**ActiveSupport::TimeWithZone**\)**: accepts a `ActiveSupport::TimeWithZone` that **must be in the future**. Returns an `ActiveSupport::TimeWithZone` that is **today** and has no fractional seconds.
 
 **purge!**: ****Marks the instance for death at the beginning of the next tick. _As with other dead things_, it will not run again. Note: you can inspect the `purge` accessor boolean inside of your `Event` class. 🎯
 
