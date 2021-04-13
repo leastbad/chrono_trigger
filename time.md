@@ -59,7 +59,7 @@ From the moment your server boots and the `Clock` starts, every second is a new 
 puts ChronoTrigger::Clock.ticks
 ```
 
-You might find creative uses for ticks, especially if you sometimes [pause](the-clock.md#stop) the `Clock`.
+You might find creative uses for ticks, especially if you sometimes [pause](clock.md#stop) the `Clock`.
 
 In such a scenario, you might find yourself wondering how many ticks have occurred, _even if far more IRL time has passed_.
 
