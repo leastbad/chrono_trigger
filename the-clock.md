@@ -1,5 +1,9 @@
 # The Clock
 
+`ChronoTrigger::Clock` is running the show around here.
+
+Every 100ms \([configurable via initializer](setup.md#optional-create-an-initializer)\) the `Clock` commands the scheduler to process any pending events.
+
 ## API
 
 ### Methods
@@ -17,8 +21,6 @@
 #### ticks
 
 #### ticking?
-
-## Examples
 
 ### Toggling between starting and stopping
 

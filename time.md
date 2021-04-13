@@ -10,9 +10,30 @@ Worse, if your instructions take longer than a second to process, then I guess y
 
 I was embarrassed that Ruby couldn't just reliably syncronize with the NYE ball drop or a NASA countdown.
 
-That makes ChronoTrigger a bit of an eccentricity, as libraries go. Ruby doesn't give us a way to execute code on the second, but ChronoTrigger gets close enough to fake it, convincingly, in a non-blocking and resource-efficient way.
+**Ruby doesn't give us a way to execute code on the second, but ChronoTrigger gets close enough to fake it, convincingly, in a non-blocking and resource-efficient way.**
 
-![Chrono Trigger \(1995\)](.gitbook/assets/dvs0n3lxkaaa__k.jpg)
+That makes ChronoTrigger a bit of an eccentric, as libraries go.
+
+![Chrono Trigger \(1995\)](.gitbook/assets/chrono-trigger.jpg)
+
+## Design concepts and goals
+
+* Not a replacement for ActiveJob \(or cron!\)
+* Events are ephemeral and disposable; failure should be fine 🤷
+* Borrow the best ideas from the ActiveJob and CableReady APIs
+* ActiveSupport::TimeWithZone all the way down
+* All times are today, rounded to 1s for easy comparison
+* Times are memoized to avoid side effects
+* Events should be short term and soon; _there is no tomorrow_
+* Run in-process with no additional infrastructure dependencies
+
+## Why not ActiveJob?
+
+ActiveJob is amazing, but creating Jobs for typical ChronoTrigger use cases feels like taking a taxi to the next house.
+
+Jobs are not designed to run immediately, and priority should be given to important things like mail delivery. There's also functionality in the Event class that would be hard to retrofit to Job classes.
+
+It's also worth mentioning that requiring Sidekiq would require Heroku users to set up a worker dyno, even if you're not using ActiveJob. Finally, Sidekiq sometimes runs jobs multiple times!
 
 ## ChronoTrigger Time
 
@@ -25,6 +46,8 @@ There are some [simple laws](https://tardis.fandom.com/wiki/Laws_of_Time) which 
 These requirements make it easy to both compare times and do time calculations like `right_now + 1.minute` or `moment_in_the_future(16.seconds.from_now)`.
 
 ChronoTrigger events are designed to be _low-stakes_ and they are supposed to happen **soon**. Otherwise, ActiveJob or `cron` are likely better suited to your problem.
+
+![](.gitbook/assets/soon.jpg)
 
 ## Ticks 🐞🐞🐞
 
