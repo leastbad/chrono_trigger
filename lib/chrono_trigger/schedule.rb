@@ -19,6 +19,8 @@ module ChronoTrigger
     end
 
     def remove(uuid)
+      return self unless uuid
+      uuid = uuid.id if uuid.is_a?(ChronoTrigger::Event)
       uuid_regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
       @events.each { |event| event.purge! if event.id == uuid } if uuid && uuid_regex.match?(uuid.to_s.downcase)
       self
