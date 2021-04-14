@@ -24,19 +24,7 @@ event = ExampleEvent.schedule
 It's a good idea to assign `Event` instances to a variable so that you can access important attributes and methods you'll use later.
 {% endhint %}
 
-With no parameters or options specified, this `ExampleEvent` will run one time. This will happen at the next **tick**.
-
-## Ticks
-
-Ticks are how ChronoTrigger refers to the beginning of the next clock second. It's always less than a second away. Don't blink! 😲
-
-From the moment your server boots and the `Clock` starts, every second is a new tick. You can actually see how many ticks have passed since the server was started by running the `ticks` helper method inside your event's `perform` method, or directly inspecting the `Clock` itself:
-
-```ruby
-puts ChronoTrigger::Clock.ticks
-```
-
-You might find creative uses for ticks, especially if in your application you sometimes [pause](the-clock.md#stop) the `Clock`. In such a scenario, you might find yourself wondering how many ticks have occurred, even if far more IRL time has passed.
+With no parameters or options specified, this `ExampleEvent` will run one time. This will happen at the next [tick](time.md).
 
 ## Event attributes
 
@@ -55,6 +43,10 @@ You might find creative uses for ticks, especially if in your application you so
 **before**: only run this `Event` instance until a certain time in the future. It can be set to a String that will be parsed into a `ActiveSupport::TimeWithZone` or you can pass an `ActiveSupport::TimeWithZone` directly.
 
 **after**: only run this `Event` instance after a certain time. It can be set to a String that will be parsed into a `ActiveSupport::TimeWithZone` or you can pass an `ActiveSupport::TimeWithZone` directly.
+
+{% hint style="success" %}
+All of the attributes are read-accessible inside your `perform` method.
+{% endhint %}
 
 ## Method chaining
 
@@ -97,11 +89,31 @@ Starting on the next tick, each instance of `ExampleEvent` will repeat every 3 s
 You can combine attributes set with class methods and chained methods. Note that attributes set via chained methods take precedence over class methods, allowing you to set meaningful defaults in your `Event` class and then override them like a pirate when actually scheduling.
 {% endhint %}
 
+## Parameters
+
+Similar to an ActiveJob, you can pass arguments into an `Event` when you schedule it:
+
+```ruby
+ExampleEvent.schedule(current_user)
+```
+
+`Event` instances don't automatically know the `current_user` but we can tell it. Let's use CableReady's [console\_log](https://cableready.stimulusreflex.com/reference/operations/notifications#console_log) operation to send them a customizable greeting via the `UsersChannel` that is already present in our fictional example.
+
+{% code title="app/events/example\_event.rb" %}
+```ruby
+class ExampleEvent < ApplicationEvent
+  def perform(user, greeting = "Hello")
+    cable_ready[UsersChannel].console_log(message: "#{greeting}, #{user.name}!").broadcast_to(user)
+  end
+end
+```
+{% endcode %}
+
 ## Helper methods
 
-**moment\_in\_the\_future\(**ActiveSupport::TimeWithZone**\)**: accepts a \`ActiveSupport::TimeWithZone\` that **must be in the future**. Returns an `ActiveSupport::TimeWithZone` that is **today** and has no fractional seconds.
+**moment\_in\_the\_future\(**ActiveSupport::TimeWithZone**\)**: accepts a `ActiveSupport::TimeWithZone` that **must be in the future**. Returns an `ActiveSupport::TimeWithZone` that is **today** and has no fractional seconds.
 
-**purge!**: ****Marks the instance for death at the beginning of the next tick. _As with other dead things_, it will not run again. Note: you can inspect the `purge` accessor boolean inside of your `Event` class.
+**purge!**: ****Marks the instance for death at the beginning of the next tick. _As with other dead things_, it will not run again. Note: you can inspect the `purge` accessor boolean inside of your `Event` class. 🎯
 
 **right\_now**: Returns the current time with no fractional seconds.
 

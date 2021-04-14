@@ -1,4 +1,4 @@
-# The Clock
+# Clock
 
 `ChronoTrigger::Clock` is running the show around here.
 
