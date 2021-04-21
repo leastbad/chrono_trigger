@@ -47,8 +47,6 @@ These requirements make it easy to both compare times and do time calculations l
 
 ChronoTrigger events are designed to be _low-stakes_ and they are supposed to happen **soon**. Otherwise, ActiveJob or `cron` are likely better suited to your problem.
 
-![](.gitbook/assets/soon.jpg)
-
 ## Ticks 🐞🐞🐞
 
 Ticks are how ChronoTrigger refers to the beginning of the next clock second. It's always less than a second away. Don't blink! 😲
